@@ -5,7 +5,7 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "jenkins.agentsNamespace" -}}
+{{- define "jenkins.agents.namespace" -}}
 {{ .Release.Namespace }}-agents
 {{- end }}
 
@@ -57,15 +57,18 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "jenkins.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "jenkins.fullname" .) .Values.serviceAccount.name }}
+{{- define "jenkins.server.serviceAccountName" -}}
+{{- if .Values.server.serviceAccount.create }}
+{{- default (include "jenkins.fullname" .) .Values.server.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" .Values.server.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
-
-{{- define "jenkins.agentsServiceAccountName" -}}
-{{ include "jenkins.serviceAccountName" . }}-agents
+{{- define "jenkins.agents.serviceAccountName" -}}
+{{- if .Values.agents.serviceAccount.create }}
+{{- default (include "jenkins.fullname" .) .Values.agents.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.agents.serviceAccount.name }}
+{{- end }}
 {{- end }}

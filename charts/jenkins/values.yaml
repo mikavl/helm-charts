@@ -1,64 +1,72 @@
-image:
-  repository: jenkins/jenkins
-  pullPolicy: Always
-  tag: ""
-
-persistence:
-  storageClassName: ""
-  size: 10Gi
-
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
+agents:
+  serviceAccount:
+    create: true
+    annotation: {}
+    name: ""
 
-podAnnotations: {}
+server:
+  image:
+    repository: jenkins/jenkins
+    pullPolicy: Always
+    tag: ""
 
-resources:
-  requests:
-    cpu: 100m
-    memory: 512Mi
-  limits:
-    cpu: 1
-    memory: 512Mi
+  persistence:
+    storageClassName: ""
+    size: 10Gi
 
-podSecurityContext:
-  runAsUser: 10000
-  runAsGroup: 10000
-  fsGroup: 10000
+  imagePullSecrets: []
 
-securityContext:
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-    - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
 
-service:
-  type: ClusterIP
-  port: 8080
+  podAnnotations: {}
 
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 512Mi
 
-nodeSelector: {}
-tolerations: []
-affinity: {}
+  podSecurityContext:
+    runAsUser: 10000
+    runAsGroup: 10000
+    fsGroup: 10000
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+
+  service:
+    type: ClusterIP
+    port: 8080
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

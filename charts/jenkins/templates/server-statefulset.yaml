@@ -12,37 +12,37 @@ spec:
       {{- include "jenkins.selectorLabels" . | nindent 6 }}
   volumeClaimTemplates:
     - metadata:
-        name: {{ include "jenkins.fullname" . }}
+        name: data
       spec:
         accessModes:
           - "ReadWriteOnce"
-        storageClassName: {{ .Values.persistence.storageClassName }}
+        storageClassName: {{ .Values.server.persistence.storageClassName }}
         resources:
           requests:
-            storage: {{ .Values.persistence.size }}
+            storage: {{ .Values.server.persistence.size }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.server.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         {{- include "jenkins.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.server.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "jenkins.serviceAccountName" . }}
+      serviceAccountName: {{ include "jenkins.server.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
       volumes:
         - name: tmp
           emptyDir: {}
       initContainers:
         - name: init
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           command: [ /usr/bin/install ]
           args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/var/jenkins_home" ]
           securityContext:
@@ -56,18 +56,18 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: {{ include "jenkins.fullname" . }}
+            - name: data
               mountPath: /var/jenkins_home
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.server.resources | nindent 12 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- toYaml .Values.server.securityContext | nindent 12 }}
+          image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           volumeMounts:
-            - name: {{ include "jenkins.fullname" . }}
+            - name: data
               mountPath: /var/jenkins_home
             - name: tmp
               mountPath: /tmp
@@ -90,16 +90,16 @@ spec:
               path: /robots.txt
               port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+            {{- toYaml .Values.server.resources | nindent 12 }}
+      {{- with .Values.server.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.server.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.server.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
