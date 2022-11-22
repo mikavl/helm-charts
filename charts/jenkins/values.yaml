@@ -1,6 +1,6 @@
 image:
   repository: jenkins/jenkins
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: ""
 
 agentNamespace: jenkins-agents
@@ -14,11 +14,18 @@ nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  create: true
   annotations: {}
   name: ""
 
 podAnnotations: {}
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    cpu: 1
+    memory: 512Mi
 
 podSecurityContext:
   runAsUser: 10000
@@ -53,7 +60,6 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}

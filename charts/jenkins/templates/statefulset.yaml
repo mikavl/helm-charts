@@ -1,13 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "jenkins.fullname" . }}
   labels:
     {{- include "jenkins.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "jenkins.fullname" . }}
-  strategy:
-    type: Recreate
   replicas: 1
   selector:
     matchLabels:
@@ -39,21 +37,35 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: {{ include "jenkins.fullname" . }}
         - name: tmp
           emptyDir: {}
+      initContainers:
+        - name: init
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [ /usr/bin/install ]
+          args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/var/jenkins_home" ]
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            capabilities:
+              add:
+                - DAC_OVERRIDE
+                - FOWNER
+                - CHOWN
+              drop:
+                - ALL
+          volumeMounts:
+            - name: {{ include "jenkins.fullname" . }}
+              mountPath: /var/jenkins_home
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.env }}
-          env:
-            {{ toYaml . | nindent 12 }}
-          {{- end }}
           volumeMounts:
             - name: {{ include "jenkins.fullname" . }}
               mountPath: /var/jenkins_home
@@ -63,6 +75,12 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /robots.txt
+              port: http
+            failureThreshold: 30
+            periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /robots.txt
