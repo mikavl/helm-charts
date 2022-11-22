@@ -3,8 +3,6 @@ image:
   pullPolicy: Always
   tag: ""
 
-agentNamespace: jenkins-agents
-
 persistence:
   storageClassName: ""
   size: 10Gi
@@ -14,6 +12,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
+  create: true
   annotations: {}
   name: ""
 

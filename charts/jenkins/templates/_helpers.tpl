@@ -5,6 +5,10 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "jenkins.agentsNamespace" -}}
+{{ .Release.Namespace }}-agents
+{{- end }}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -54,5 +58,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "jenkins.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
 {{- default (include "jenkins.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+
+{{- define "jenkins.agentsServiceAccountName" -}}
+{{ include "jenkins.serviceAccountName" . }}-agents
 {{- end }}
