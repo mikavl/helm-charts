@@ -44,7 +44,7 @@ spec:
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           command: [ /usr/bin/install ]
-          args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/var/jenkins_home" ]
+          args: [ "-d", "-m", "0700", "-o", "1000", "-g", "1000", "/var/jenkins_home" ]
           securityContext:
             runAsNonRoot: false
             runAsUser: 0

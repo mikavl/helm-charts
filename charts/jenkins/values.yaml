@@ -35,9 +35,9 @@ server:
       memory: 512Mi
 
   podSecurityContext:
-    runAsUser: 10000
-    runAsGroup: 10000
-    fsGroup: 10000
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
 
   securityContext:
     allowPrivilegeEscalation: false
