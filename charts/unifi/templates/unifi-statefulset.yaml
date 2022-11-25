@@ -70,9 +70,15 @@ spec:
           image: "{{ .Values.unifi.image.repository }}:{{ .Values.unifi.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.unifi.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: stun
+              protocol: UDP
+              containerPort: 3478
+            - name: unifi
               protocol: TCP
+              containerPort: 8080
+            - name: https
+              protocol: TCP
+              containerPort: 8443
           startupProbe:
             httpGet:
               path: /status
