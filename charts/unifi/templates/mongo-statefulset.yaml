@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "unifi.mongo.fullname" . }}
   labels:
     {{- include "unifi.mongo.labels" . | nindent 4 }}
 spec:
+  serviceName: mongo
   replicas: 1
   selector:
     matchLabels:
@@ -47,8 +48,6 @@ spec:
           command: [ "/usr/bin/install" ]
           args: [ "-d", "-m", "0700", "-o", "1000", "-g", "1000", "/data/db" ]
           volumeMounts:
-            - name: tmp
-              mountPath: /tmp
             - name: data
               mountPath: /data/db
           resources:
@@ -96,6 +95,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data/db
+            - name: tmp
+              mountPath: /tmp
           resources:
             {{- toYaml .Values.mongo.resources | nindent 12 }}
       {{- with .Values.mongo.nodeSelector }}

@@ -64,7 +64,7 @@ mongo:
 unifi:
 
   image:
-    repository: nginx
+    repository: jacobalberty/unifi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -72,6 +72,10 @@ unifi:
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
+
+  persistence:
+    size: 1Gi
+    storageClassName: ""
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -84,20 +88,28 @@ unifi:
 
   podAnnotations: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
 
   service:
-    type: ClusterIP
-    port: 80
+    controller:
+      type: ClusterIP
+      ports:
+        unifi: 8080
+        stun: 3478
+    https:
+      type: ClusterIP
+      port: 8443
 
   ingress:
     enabled: false
