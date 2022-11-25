@@ -40,13 +40,22 @@ spec:
         - name: tmp
           emptyDir: {}
       initContainers:
-        - name: mongo
+        - name: init
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            readOnlyRootFilesystem: true
+            runAsNonRoot: false
+            runAsUser: 0
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - DAC_OVERRIDE
+                - CHOWN
+                - FOWNER
           image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag }}"
           imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}
           command: [ "/usr/bin/install" ]
-          args: [ "-d", "-m", "0700", "-o", "1000", "-g", "1000", "/data/db" ]
+          args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/data/db" ]
           volumeMounts:
             - name: data
               mountPath: /data/db
