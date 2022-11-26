@@ -1,12 +1,12 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "unifi.unifi.name" -}}
+{{- define "unifi.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "unifi.mongo.name" -}}
-{{- printf "%s-%s" (include "unifi.unifi.name" .) "mongo" }}
+{{- define "mongo.name" -}}
+mongo
 {{- end }}
 
 {{/*
@@ -14,7 +14,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "unifi.unifi.fullname" -}}
+{{- define "unifi.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -27,17 +27,8 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 
-{{- define "unifi.mongo.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}-mongo
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}-mongo
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}-mongo
-{{- end }}
-{{- end }}
+{{- define "mongo.fullname" -}}
+mongo
 {{- end }}
 
 {{/*
@@ -50,20 +41,20 @@ Create chart name and version as used by the chart label.
 {{/*
 Common labels
 */}}
-{{- define "unifi.unifi.labels" -}}
+{{- define "unifi.labels" -}}
 helm.sh/chart: {{ include "unifi.chart" . }}
-{{ include "unifi.unifi.selectorLabels" . }}
+{{ include "unifi.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
-{{- define "unifi.mongo.labels" -}}
+{{- define "mongo.labels" -}}
 helm.sh/chart: {{ include "unifi.chart" . }}
-{{ include "unifi.mongo.selectorLabels" . }}
+{{ include "mongo.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/version: {{ .Values.mongo.image.tag | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
@@ -71,30 +62,30 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "unifi.unifi.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "unifi.unifi.name" . }}
+{{- define "unifi.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "unifi.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{- define "unifi.mongo.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "unifi.mongo.name" . }}
+{{- define "mongo.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "mongo.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "unifi.unifi.serviceAccountName" -}}
+{{- define "unifi.serviceAccountName" -}}
 {{- if .Values.unifi.serviceAccount.create }}
-{{- default (include "unifi.unifi.fullname" .) .Values.unifi.serviceAccount.name }}
+{{- default (include "unifi.fullname" .) .Values.unifi.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.unifi.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
-{{- define "unifi.mongo.serviceAccountName" -}}
+{{- define "mongo.serviceAccountName" -}}
 {{- if .Values.mongo.serviceAccount.create }}
-{{- default (include "unifi.mongo.fullname" .) .Values.mongo.serviceAccount.name }}
+{{- default (include "mongo.fullname" .) .Values.mongo.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.mongo.serviceAccount.name }}
 {{- end }}

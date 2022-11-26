@@ -43,17 +43,13 @@ mongo:
     port: 27017
 
 
-  resources: {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 1
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
 
   nodeSelector: {}
 
@@ -72,6 +68,20 @@ unifi:
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
+
+  env:
+    - name: TZ
+      value: Europe/Helsinki
+    - name: DB_NAME
+      value: unifi
+    - name: DB_URI
+      value: mongodb://mongo.unifi.svc.cluster.local/unifi
+    - name: STATDB_URI
+      value: mongodb://mongo.unifi.svc.cluster.local/unifi_stat
+    - name: JVM_INIT_HEAP_SIZE
+      value: 512M
+    - name: JVM_MAX_HEAP_SIZE
+      value: 512M
 
   persistence:
     size: 1Gi
@@ -127,17 +137,13 @@ unifi:
     #    hosts:
     #      - chart-example.local
 
-  resources: {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 2
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 512Mi
 
   nodeSelector: {}
 

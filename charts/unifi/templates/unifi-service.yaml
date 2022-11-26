@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unifi.unifi.fullname" . }}
+  name: {{ include "unifi.fullname" . }}
   labels:
-    {{- include "unifi.unifi.labels" . | nindent 4 }}
+    {{- include "unifi.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.unifi.service.controller.type }}
   ports:
@@ -16,14 +16,14 @@ spec:
       protocol: TCP
       name: unifi
   selector:
-    {{- include "unifi.unifi.selectorLabels" . | nindent 4 }}
+    {{- include "unifi.selectorLabels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unifi.unifi.fullname" . }}-https
+  name: {{ include "unifi.fullname" . }}-https
   labels:
-    {{- include "unifi.unifi.labels" . | nindent 4 }}
+    {{- include "unifi.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.unifi.service.https.type }}
   ports:
@@ -32,5 +32,5 @@ spec:
       protocol: TCP
       name: https
   selector:
-    {{- include "unifi.unifi.selectorLabels" . | nindent 4 }}
+    {{- include "unifi.selectorLabels" . | nindent 4 }}
 
