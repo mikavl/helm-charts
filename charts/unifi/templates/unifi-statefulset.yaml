@@ -69,6 +69,10 @@ spec:
             {{- toYaml .Values.unifi.securityContext | nindent 12 }}
           image: "{{ .Values.unifi.image.repository }}:{{ .Values.unifi.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.unifi.image.pullPolicy }}
+          {{- with .Values.unifi.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: stun
               protocol: UDP
