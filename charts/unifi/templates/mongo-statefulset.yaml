@@ -5,8 +5,8 @@ metadata:
   labels:
     {{- include "mongo.labels" . | nindent 4 }}
 spec:
-  serviceName: mongo
-  replicas: 1
+  serviceName: {{ include "mongo.fullname" . }}
+  replicas: {{ .Values.mongo.replicaCount }}
   selector:
     matchLabels:
       {{- include "mongo.selectorLabels" . | nindent 6 }}
@@ -42,9 +42,6 @@ spec:
       initContainers:
         - name: init
           securityContext:
-            readOnlyRootFilesystem: true
-            runAsNonRoot: false
-            runAsUser: 0
             capabilities:
               drop:
                 - ALL
@@ -52,8 +49,11 @@ spec:
                 - DAC_OVERRIDE
                 - CHOWN
                 - FOWNER
+            readOnlyRootFilesystem: true
+            runAsNonRoot: false
+            runAsUser: 0
           image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag }}"
-          imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}
+          imagePullPolicy: IfNotPresent
           command: [ "/usr/bin/install" ]
           args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/data/db" ]
           volumeMounts:
@@ -64,7 +64,7 @@ spec:
       containers:
         - name: mongo
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.mongo.securityContext | nindent 12 }}
           image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag }}"
           imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}
           command:

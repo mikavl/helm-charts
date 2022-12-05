@@ -5,8 +5,8 @@ metadata:
   labels:
     {{- include "unifi.labels" . | nindent 4 }}
 spec:
-  serviceName: unifi
-  replicas: 1
+  serviceName: {{ include "unifi.fullname" . }}
+  replicas: {{ .Values.unifi.replicaCount }}
   selector:
     matchLabels:
       {{- include "unifi.selectorLabels" . | nindent 6 }}
@@ -44,9 +44,6 @@ spec:
       initContainers:
         - name: init
           securityContext:
-            readOnlyRootFilesystem: true
-            runAsNonRoot: false
-            runAsUser: 0
             capabilities:
               drop:
                 - ALL
@@ -54,8 +51,11 @@ spec:
                 - DAC_OVERRIDE
                 - CHOWN
                 - FOWNER
+            readOnlyRootFilesystem: true
+            runAsNonRoot: false
+            runAsUser: 0
           image: "{{ .Values.unifi.image.repository }}:{{ .Values.unifi.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.unifi.image.pullPolicy }}
+          imagePullPolicy: IfNotPresent
           command: [ "/usr/bin/install" ]
           args: [ "-d", "-m", "0700", "-o", "999", "-g", "999", "/unifi" ]
           volumeMounts:
@@ -74,10 +74,10 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
-            - name: stun
+            - name: {{ (index .Values.unifi.service.controller.ports 0).name }}
               protocol: UDP
               containerPort: 3478
-            - name: unifi
+            - name: {{ (index .Values.unifi.service.controller.ports 1).name }}
               protocol: TCP
               containerPort: 8080
             - name: https
@@ -100,8 +100,6 @@ spec:
               path: /status
               port: https
               scheme: HTTPS
-          resources:
-            {{- toYaml .Values.unifi.resources | nindent 12 }}
           volumeMounts:
             - name: run
               mountPath: /run
@@ -109,6 +107,8 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /unifi
+          resources:
+            {{- toYaml .Values.unifi.resources | nindent 12 }}
       {{- with .Values.unifi.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

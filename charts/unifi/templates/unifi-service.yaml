@@ -1,20 +1,20 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unifi.fullname" . }}
+  name: {{ include "unifi.fullname" . }}-controller
   labels:
     {{- include "unifi.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.unifi.service.controller.type }}
   ports:
-    - port: {{ .Values.unifi.service.controller.ports.stun }}
-      targetPort: stun
+    - port: {{ (index .Values.unifi.service.controller.ports 0).port }}
+      targetPort: {{ (index .Values.unifi.service.controller.ports 0).name }}
       protocol: UDP
-      name: stun
-    - port: {{ .Values.unifi.service.controller.ports.unifi }}
-      targetPort: unifi
+      name: {{ (index .Values.unifi.service.controller.ports 0).name }}
+    - port: {{ (index .Values.unifi.service.controller.ports 1).port }}
+      targetPort: {{ (index .Values.unifi.service.controller.ports 1).name }}
       protocol: TCP
-      name: unifi
+      name: {{ (index .Values.unifi.service.controller.ports 1).name }}
   selector:
     {{- include "unifi.selectorLabels" . | nindent 4 }}
 ---
@@ -33,4 +33,3 @@ spec:
       name: https
   selector:
     {{- include "unifi.selectorLabels" . | nindent 4 }}
-
