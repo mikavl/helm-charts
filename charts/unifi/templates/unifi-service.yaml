@@ -5,32 +5,11 @@ metadata:
   labels:
     {{- include "unifi.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.unifi.service.controller.type }}
+  type: {{ .Values.unifi.service.type }}
   ports:
-    - port: {{ .Values.unifi.service.controller.ports.stun }}
-      targetPort: stun
-      protocol: UDP
-      name: stun
-    - port: {{ .Values.unifi.service.controller.ports.unifi }}
-      targetPort: unifi
+    - port: {{ .Values.unifi.service.port }}
+      targetPort: http
       protocol: TCP
-      name: unifi
+      name: http
   selector:
     {{- include "unifi.selectorLabels" . | nindent 4 }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "unifi.fullname" . }}-https
-  labels:
-    {{- include "unifi.labels" . | nindent 4 }}
-spec:
-  type: {{ .Values.unifi.service.https.type }}
-  ports:
-    - port: {{ .Values.unifi.service.https.port }}
-      targetPort: https
-      protocol: TCP
-      name: https
-  selector:
-    {{- include "unifi.selectorLabels" . | nindent 4 }}
-

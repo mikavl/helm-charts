@@ -5,21 +5,11 @@ metadata:
   labels:
     {{- include "mongo.labels" . | nindent 4 }}
 spec:
-  serviceName: mongo
-  replicas: 1
+  serviceName: {{ include "mongo.fullname" . }}
+  replicas: {{ .Values.mongo.replicaCount }}
   selector:
     matchLabels:
       {{- include "mongo.selectorLabels" . | nindent 6 }}
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        storageClassName: {{ .Values.mongo.persistence.storageClassName }}
-        resources:
-          requests:
-            storage: {{ .Values.mongo.persistence.size }}
   template:
     metadata:
       {{- with .Values.mongo.podAnnotations }}
@@ -36,76 +26,24 @@ spec:
       serviceAccountName: {{ include "mongo.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.mongo.podSecurityContext | nindent 8 }}
-      volumes:
-        - name: tmp
-          emptyDir: {}
-      initContainers:
-        - name: init
-          securityContext:
-            readOnlyRootFilesystem: true
-            runAsNonRoot: false
-            runAsUser: 0
-            capabilities:
-              drop:
-                - ALL
-              add:
-                - DAC_OVERRIDE
-                - CHOWN
-                - FOWNER
-          image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag }}"
-          imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}
-          command: [ "/usr/bin/install" ]
-          args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/data/db" ]
-          volumeMounts:
-            - name: data
-              mountPath: /data/db
-          resources:
-            {{- toYaml .Values.mongo.resources | nindent 12 }}
       containers:
-        - name: mongo
+        - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag }}"
+            {{- toYaml .Values.mongo.securityContext | nindent 12 }}
+          image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}
-          command:
-            - "mongod"
-          args:
-            - "--bind_ip_all"
-            - "--nojournal"
-            - "--wiredTigerCacheSizeGB"
-            - "0.25"
           ports:
-            - name: mongo
-              containerPort: 27017
+            - name: http
+              containerPort: 80
               protocol: TCP
-          startupProbe:
-            exec:
-              command:
-                - "mongo"
-                - "--eval"
-                - "db.runCommand('ping').ok"
-                - "--quiet"
-            failureThreshold: 30
-            periodSeconds: 10
           livenessProbe:
-            exec:
-              command:
-                - "mongo"
-                - "--eval"
-                - "db.runCommand('ping').ok"
-                - "--quiet"
+            httpGet:
+              path: /
+              port: http
           readinessProbe:
-            exec:
-              command:
-                - "mongo"
-                - "--eval"
-                - "db.runCommand('ping').ok"
-                - "--quiet"
-          volumeMounts:
-            - name: data
-              mountPath: /data/db
-            - name: tmp
-              mountPath: /tmp
+            httpGet:
+              path: /
+              port: http
           resources:
             {{- toYaml .Values.mongo.resources | nindent 12 }}
       {{- with .Values.mongo.nodeSelector }}

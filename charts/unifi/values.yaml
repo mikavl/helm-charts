@@ -1,18 +1,19 @@
-nameOverride: ""
-fullnameOverride: ""
-
 mongo:
+  # Default values for mongo.
+  # This is a YAML-formatted file.
+  # Declare variables to be passed into your templates.
+
+  replicaCount: 1
 
   image:
-    repository: library/mongo
-    pullPolicy: Always
-    tag: "3.6"
-
-  persistence:
-    size: 10Gi
-    storageClassName: ""
+    repository: nginx
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
 
   imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -25,31 +26,32 @@ mongo:
 
   podAnnotations: {}
 
-  podSecurityContext:
-    runAsUser: 10000
-    runAsGroup: 10000
-    fsGroup: 10000
+  podSecurityContext: {}
+    # fsGroup: 2000
 
-  securityContext:
-    capabilities:
-      drop:
-      - ALL
-    readOnlyRootFilesystem: true
-    runAsNonRoot: true
-    allowPrivilegeEscalation: false
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
 
   service:
     type: ClusterIP
     port: 27017
 
-
-  resources:
-    limits:
-      cpu: 1
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 256Mi
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
   nodeSelector: {}
 
@@ -58,34 +60,21 @@ mongo:
   affinity: {}
 
 unifi:
+  # Default values for unifi.
+  # This is a YAML-formatted file.
+  # Declare variables to be passed into your templates.
+
+  replicaCount: 1
 
   image:
-    repository: jacobalberty/unifi
-    pullPolicy: Always
+    repository: nginx
+    pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
-
-  env:
-    - name: TZ
-      value: Europe/Helsinki
-    - name: DB_NAME
-      value: unifi
-    - name: DB_URI
-      value: mongodb://mongo.unifi.svc.cluster.local/unifi
-    - name: STATDB_URI
-      value: mongodb://mongo.unifi.svc.cluster.local/unifi_stat
-    - name: JVM_INIT_HEAP_SIZE
-      value: 512M
-    - name: JVM_MAX_HEAP_SIZE
-      value: 512M
-
-  persistence:
-    size: 1Gi
-    storageClassName: ""
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -98,28 +87,20 @@ unifi:
 
   podAnnotations: {}
 
-  podSecurityContext:
-    runAsUser: 999
-    runAsGroup: 999
-    fsGroup: 999
+  podSecurityContext: {}
+    # fsGroup: 2000
 
-  securityContext:
-    capabilities:
-      drop:
-      - ALL
-    readOnlyRootFilesystem: true
-    runAsNonRoot: true
-    allowPrivilegeEscalation: false
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
 
   service:
-    controller:
-      type: ClusterIP
-      ports:
-        unifi: 8080
-        stun: 3478
-    https:
-      type: ClusterIP
-      port: 8443
+    type: ClusterIP
+    port: 80
 
   ingress:
     enabled: false
@@ -137,13 +118,17 @@ unifi:
     #    hosts:
     #      - chart-example.local
 
-  resources:
-    limits:
-      cpu: 2
-      memory: 1024Mi
-    requests:
-      cpu: 100m
-      memory: 512Mi
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
   nodeSelector: {}
 
