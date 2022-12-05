@@ -8,8 +8,8 @@ spec:
   type: {{ .Values.mongo.service.type }}
   ports:
     - port: {{ .Values.mongo.service.port }}
-      targetPort: http
+      targetPort: mongo
       protocol: TCP
-      name: http
+      name: mongo
   selector:
     {{- include "mongo.selectorLabels" . | nindent 4 }}

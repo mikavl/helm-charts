@@ -10,6 +10,16 @@ spec:
   selector:
     matchLabels:
       {{- include "unifi.selectorLabels" . | nindent 6 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        storageClassName: {{ .Values.unifi.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.unifi.persistence.size }}
   template:
     metadata:
       {{- with .Values.unifi.podAnnotations }}
@@ -26,24 +36,77 @@ spec:
       serviceAccountName: {{ include "unifi.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.unifi.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+      initContainers:
+        - name: init
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - DAC_OVERRIDE
+                - CHOWN
+                - FOWNER
+            readOnlyRootFilesystem: true
+            runAsNonRoot: false
+            runAsUser: 0
+          image: "{{ .Values.unifi.image.repository }}:{{ .Values.unifi.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: IfNotPresent
+          command: [ "/usr/bin/install" ]
+          args: [ "-d", "-m", "0700", "-o", "999", "-g", "999", "/unifi" ]
+          volumeMounts:
+            - name: data
+              mountPath: /unifi
+          resources:
+            {{- toYaml .Values.unifi.resources | nindent 12 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.unifi.securityContext | nindent 12 }}
           image: "{{ .Values.unifi.image.repository }}:{{ .Values.unifi.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.unifi.image.pullPolicy }}
+          {{- with .Values.unifi.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: {{ (index .Values.unifi.service.controller.ports 0).name }}
+              protocol: UDP
+              containerPort: 3478
+            - name: {{ (index .Values.unifi.service.controller.ports 1).name }}
               protocol: TCP
+              containerPort: 8080
+            - name: https
+              protocol: TCP
+              containerPort: 8443
+          startupProbe:
+            httpGet:
+              path: /status
+              port: https
+              scheme: HTTPS
+            failureThreshold: 30
+            periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /status
+              port: https
+              scheme: HTTPS
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /status
+              port: https
+              scheme: HTTPS
+          volumeMounts:
+            - name: run
+              mountPath: /run
+            - name: tmp
+              mountPath: /tmp
+            - name: data
+              mountPath: /unifi
           resources:
             {{- toYaml .Values.unifi.resources | nindent 12 }}
       {{- with .Values.unifi.nodeSelector }}
