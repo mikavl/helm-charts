@@ -1,6 +1,6 @@
 {{- if .Values.unifi.ingress.enabled -}}
 {{- $fullName := include "unifi.fullname" . -}}
-{{- $svcPort := .Values.unifi.service.port -}}
+{{- $svcPort := .Values.unifi.service.https.port -}}
 {{- if and .Values.unifi.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.unifi.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.unifi.ingress.annotations "kubernetes.io/ingress.class" .Values.unifi.ingress.className}}
@@ -49,7 +49,7 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ $fullName }}-https
                 port:
                   number: {{ $svcPort }}
               {{- else }}
