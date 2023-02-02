@@ -11,6 +11,10 @@ postgres:
     # Overrides the image tag whose default is the chart appVersion.
     tag: "15"
 
+  persistence:
+    size: 10Gi
+    storageClassName: ""
+
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
