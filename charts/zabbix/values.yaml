@@ -6,10 +6,10 @@ postgres:
   replicaCount: 1
 
   image:
-    repository: nginx
+    repository: library/postgres
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
+    tag: "15"
 
   imagePullSecrets: []
   nameOverride: ""
@@ -67,7 +67,7 @@ server:
   replicaCount: 1
 
   image:
-    repository: nginx
+    repository: zabbix/zabbix-server-pgsql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -129,7 +129,7 @@ web:
   replicaCount: 1
 
   image:
-    repository: nginx
+    repository: zabbix/zabbix-web-nginx-pgsql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""

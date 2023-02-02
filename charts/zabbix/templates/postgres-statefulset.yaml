@@ -1,15 +1,25 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "postgres.fullname" . }}
   labels:
     {{- include "postgres.labels" . | nindent 4 }}
 spec:
-  serviceName: postgres
+  serviceName: {{ include "postgres.fullname" . }}
   replicas: {{ .Values.postgres.replicaCount }}
   selector:
     matchLabels:
       {{- include "postgres.selectorLabels" . | nindent 6 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        storageClassName: {{ .Values.postgres.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.postgres.persistence.size }}
   template:
     metadata:
       {{- with .Values.postgres.podAnnotations }}
@@ -33,17 +43,9 @@ spec:
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
           ports:
-            - name: http
+            - name: postgres
               containerPort: {{ .Values.postgres.service.port }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+              protocol: 5432
           resources:
             {{- toYaml .Values.postgres.resources | nindent 12 }}
       {{- with .Values.postgres.nodeSelector }}

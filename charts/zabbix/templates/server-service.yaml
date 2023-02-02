@@ -8,8 +8,8 @@ spec:
   type: {{ .Values.server.service.type }}
   ports:
     - port: {{ .Values.server.service.port }}
-      targetPort: http
+      targetPort: zabbix
       protocol: TCP
-      name: http
+      name: zabbix
   selector:
     {{- include "server.selectorLabels" . | nindent 4 }}
