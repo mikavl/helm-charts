@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "postgres.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.postgres.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -11,10 +11,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "postgres.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.postgres.fullnameOverride }}
+{{- .Values.postgres.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- $name := default .Chart.Name .Values.postgres.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -54,10 +54,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "postgres.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "postgres.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.postgres.serviceAccount.create }}
+{{- default (include "postgres.fullname" .) .Values.postgres.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" .Values.postgres.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
@@ -65,7 +65,7 @@ Create the name of the service account to use
 Expand the name of the chart.
 */}}
 {{- define "server.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.server.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -74,10 +74,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "server.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.server.fullnameOverride }}
+{{- .Values.server.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- $name := default .Chart.Name .Values.server.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -117,10 +117,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "server.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "server.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.server.serviceAccount.create }}
+{{- default (include "server.fullname" .) .Values.server.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" .Values.server.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
@@ -128,7 +128,7 @@ Create the name of the service account to use
 Expand the name of the chart.
 */}}
 {{- define "web.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.web.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -137,10 +137,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "web.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.web.fullnameOverride }}
+{{- .Values.web.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- $name := default .Chart.Name .Values.web.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -180,9 +180,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "web.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "web.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.web.serviceAccount.create }}
+{{- default (include "web.fullname" .) .Values.web.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" .Values.web.serviceAccount.name }}
 {{- end }}
 {{- end }}

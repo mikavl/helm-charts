@@ -39,23 +39,7 @@ postgres:
 
   service:
     type: ClusterIP
-    port: 80
-
-  ingress:
-    enabled: false
-    className: ""
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    hosts:
-      - host: chart-example.local
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
+    port: 5432
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
@@ -68,13 +52,6 @@ postgres:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
 
   nodeSelector: {}
 
@@ -123,23 +100,7 @@ server:
 
   service:
     type: ClusterIP
-    port: 80
-
-  ingress:
-    enabled: false
-    className: ""
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    hosts:
-      - host: chart-example.local
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
+    port: 10051
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
@@ -152,13 +113,6 @@ server:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
 
   nodeSelector: {}
 
@@ -208,7 +162,7 @@ web:
 
   service:
     type: ClusterIP
-    port: 80
+    port: 8080
 
   ingress:
     enabled: false
@@ -237,13 +191,6 @@ web:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
 
   nodeSelector: {}
 
