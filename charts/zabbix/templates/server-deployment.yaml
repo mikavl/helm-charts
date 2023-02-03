@@ -18,6 +18,9 @@ spec:
       labels:
         {{- include "server.selectorLabels" . | nindent 8 }}
     spec:
+      volumes:
+        - name: etc
+          emptyDir: {}
       {{- with .Values.server.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -25,8 +28,21 @@ spec:
       serviceAccountName: {{ include "server.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init
+          securityContext:
+            {{- toYaml .Values.server.securityContext | nindent 12 }}
+          image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: IfNotPresent
+          command: [ "/bin/sh" ]
+          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/etc"]
+          volumeMounts:
+            - name: etc
+              mountPath: /tmp/etc
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: zabbix-server
           securityContext:
             {{- toYaml .Values.server.securityContext | nindent 12 }}
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
@@ -35,6 +51,9 @@ spec:
             - name: zabbix
               containerPort: {{ .Values.server.service.port }}
               protocol: TCP
+          volumeMounts:
+            - name: etc
+              mountPath: /etc/zabbix
           {{- with .Values.server.env }}
           env:
             {{- toYaml . | nindent 12 }}

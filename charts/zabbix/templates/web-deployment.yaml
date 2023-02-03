@@ -18,6 +18,11 @@ spec:
       labels:
         {{- include "web.selectorLabels" . | nindent 8 }}
     spec:
+      volumes:
+        - name: etc
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
       {{- with .Values.web.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -25,8 +30,21 @@ spec:
       serviceAccountName: {{ include "web.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.web.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init
+          securityContext:
+            {{- toYaml .Values.web.securityContext | nindent 12 }}
+          image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: IfNotPresent
+          command: [ "/bin/sh" ]
+          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/etc"]
+          volumeMounts:
+            - name: etc
+              mountPath: /tmp/etc
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: zabbix-web
           securityContext:
             {{- toYaml .Values.web.securityContext | nindent 12 }}
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
@@ -39,6 +57,11 @@ spec:
           env:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          volumeMounts:
+            - name: etc
+              mountPath: /etc/zabbix
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /

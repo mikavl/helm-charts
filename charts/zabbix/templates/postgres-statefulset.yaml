@@ -64,10 +64,10 @@ spec:
           resources:
             {{- toYaml .Values.postgres.resources | nindent 12 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: postgres
           securityContext:
             {{- toYaml .Values.postgres.securityContext | nindent 12 }}
-          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
           ports:
             - name: postgres
