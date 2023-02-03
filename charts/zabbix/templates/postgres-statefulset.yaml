@@ -67,7 +67,7 @@ spec:
           ports:
             - name: postgres
               containerPort: {{ .Values.postgres.service.port }}
-              protocol: 5432
+              protocol: TCP
           {{- with .Values.postgres.env }}
           env:
             {{- toYaml . | nindent 12 }}
