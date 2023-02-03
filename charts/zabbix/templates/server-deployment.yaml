@@ -35,6 +35,10 @@ spec:
             - name: zabbix
               containerPort: {{ .Values.server.service.port }}
               protocol: TCP
+          {{- with .Values.server.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
       {{- with .Values.server.nodeSelector }}

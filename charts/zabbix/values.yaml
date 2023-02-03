@@ -1,8 +1,4 @@
 postgres:
-  # Default values for postgres.
-  # This is a YAML-formatted file.
-  # Declare variables to be passed into your templates.
-
   replicaCount: 1
 
   image:
@@ -74,10 +70,6 @@ postgres:
   affinity: {}
 
 server:
-  # Default values for server.
-  # This is a YAML-formatted file.
-  # Declare variables to be passed into your templates.
-
   replicaCount: 1
 
   image:
@@ -90,6 +82,20 @@ server:
   nameOverride: ""
   fullnameOverride: ""
 
+  env:
+    # This secret you need to create yourself
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: zabbix-secret
+          key: POSTGRES_PASSWORD
+    - name: DB_SERVER_HOST
+      value: "postgres"
+    - name: DB_SERVER_PORT
+      value: "5432"
+    - name: POSTGRES_USER
+      value: "zabbix"
+
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
@@ -101,16 +107,18 @@ server:
 
   podAnnotations: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:
+    runAsUser: 10000
+    runAsGroup: 10000
+    fsGroup: 10000
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
 
   service:
     type: ClusterIP
@@ -136,10 +144,6 @@ server:
 
 
 web:
-  # Default values for web.
-  # This is a YAML-formatted file.
-  # Declare variables to be passed into your templates.
-
   replicaCount: 1
 
   image:
@@ -161,18 +165,38 @@ web:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
+  env:
+    # This secret you need to create yourself
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: zabbix-secret
+          key: POSTGRES_PASSWORD
+    - name: DB_SERVER_HOST
+      value: "postgres"
+    - name: DB_SERVER_PORT
+      value: "5432"
+    - name: POSTGRES_USER
+      value: "zabbix"
+    - name: ZBX_SERVER_HOST
+      value: "zabbix-server"
+    - name: ZBX_SERVER_PORT
+      value: "10051"
+
   podAnnotations: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:
+    runAsUser: 10000
+    runAsGroup: 10000
+    fsGroup: 10000
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
 
   service:
     type: ClusterIP
