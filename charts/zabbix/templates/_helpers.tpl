@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "postgres.name" -}}
-{{- default .Chart.Name .Values.postgres.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default "postgres" .Values.postgres.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -14,11 +14,11 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.postgres.fullnameOverride }}
 {{- .Values.postgres.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.postgres.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- $name := default "postgres" .Values.postgres.nameOverride }}
+{{- if contains $name "postgres" }}
+{{- "postgres" | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" "postgres" $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -65,7 +65,7 @@ Create the name of the service account to use
 Expand the name of the chart.
 */}}
 {{- define "server.name" -}}
-{{- default .Chart.Name .Values.server.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default "zabbix-server" .Values.server.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -77,11 +77,11 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.server.fullnameOverride }}
 {{- .Values.server.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.server.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- $name := default "zabbix-server" .Values.server.nameOverride }}
+{{- if contains $name "zabbix-server" }}
+{{- "zabbix-server" | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" "zabbix-server" $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -128,7 +128,7 @@ Create the name of the service account to use
 Expand the name of the chart.
 */}}
 {{- define "web.name" -}}
-{{- default .Chart.Name .Values.web.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default "zabbix-web" .Values.web.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -140,11 +140,11 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.web.fullnameOverride }}
 {{- .Values.web.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.web.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- $name := default "zabbix-web" .Values.web.nameOverride }}
+{{- if contains $name "zabbix-web" }}
+{{- "zabbix-web" | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" "zabbix-web" $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
