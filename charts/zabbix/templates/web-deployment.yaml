@@ -19,7 +19,7 @@ spec:
         {{- include "web.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
-        - name: etc
+        - name: zabbix
           emptyDir: {}
         - name: tmp
           emptyDir: {}
@@ -37,10 +37,10 @@ spec:
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           command: [ "/bin/sh" ]
-          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/etc"]
+          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/zabbix"]
           volumeMounts:
-            - name: etc
-              mountPath: /tmp/etc
+            - name: zabbix
+              mountPath: /tmp/zabbix
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
       containers:
@@ -58,7 +58,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: etc
+            - name: zabbix
               mountPath: /etc/zabbix
             - name: tmp
               mountPath: /tmp
