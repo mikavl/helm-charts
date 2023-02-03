@@ -52,7 +52,7 @@ spec:
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           imagePullPolicy: IfNotPresent
           command: [ "/usr/bin/install" ]
-          args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/data/db" ]
+          args: [ "-d", "-m", "0700", "-o", "10000", "-g", "10000", "/var/lib/postgresql/data" ]
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
