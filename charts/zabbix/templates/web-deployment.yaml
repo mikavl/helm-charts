@@ -19,7 +19,11 @@ spec:
         {{- include "web.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
+        - name: nginx-lib
+          emptyDir: {}
         - name: nginx
+          emptyDir: {}
+        - name: session
           emptyDir: {}
         - name: zabbix
           emptyDir: {}
@@ -39,10 +43,12 @@ spec:
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           command: [ "/bin/sh" ]
-          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/zabbix && cp --recursive /etc/nginx/* /tmp/nginx"]
+          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/zabbix && cp --recursive /etc/nginx/* /tmp/nginx && mkdir -p /tmp/nginx-lib/logs"]
           volumeMounts:
             - name: nginx
               mountPath: /tmp/nginx
+            - name: nginx-lib
+              mountPath: /tmp/nginx-lib
             - name: zabbix
               mountPath: /tmp/zabbix
           resources:
@@ -64,6 +70,10 @@ spec:
           volumeMounts:
             - name: nginx
               mountPath: /etc/nginx
+            - name: nginx-lib
+              mountPath: /var/lib/nginx
+            - name: session
+              mountPath: /var/lib/php/session
             - name: zabbix
               mountPath: /etc/zabbix
             - name: tmp
