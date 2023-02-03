@@ -19,6 +19,8 @@ spec:
         {{- include "web.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
+        - name: nginx
+          emptyDir: {}
         - name: zabbix
           emptyDir: {}
         - name: tmp
@@ -37,8 +39,10 @@ spec:
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           command: [ "/bin/sh" ]
-          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/zabbix"]
+          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/zabbix && cp --recursive /etc/nginx/* /tmp/nginx"]
           volumeMounts:
+            - name: nginx
+              mountPath: /tmp/nginx
             - name: zabbix
               mountPath: /tmp/zabbix
           resources:
@@ -58,6 +62,8 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: nginx
+              mountPath: /etc/nginx
             - name: zabbix
               mountPath: /etc/zabbix
             - name: tmp
