@@ -11,6 +11,14 @@ postgres:
     # Overrides the image tag whose default is the chart appVersion.
     tag: "15"
 
+  env:
+    # This secret you need to create yourself
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: postgres-secret
+          key: POSTGRES_PASSWORD
+
   persistence:
     size: 10Gi
     storageClassName: ""
@@ -30,16 +38,18 @@ postgres:
 
   podAnnotations: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:
+    runAsUser: 10000
+    runAsGroup: 10000
+    fsGroup: 10000
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
 
   service:
     type: ClusterIP
