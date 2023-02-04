@@ -59,6 +59,11 @@ spec:
               mountPath: /etc/zabbix
             - name: tmp
               mountPath: /tmp
+          startupProbe:
+            tcpSocket:
+              port: zabbix
+            failureThreshold: 30
+            periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: zabbix

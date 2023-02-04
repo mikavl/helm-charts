@@ -73,6 +73,14 @@ spec:
             - name: postgres
               containerPort: {{ .Values.postgres.service.port }}
               protocol: TCP
+          startupProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U
+                - postgres
+            failureThreshold: 30
+            periodSeconds: 10
           readinessProbe:
             exec:
               command:
