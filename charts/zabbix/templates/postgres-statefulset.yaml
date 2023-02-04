@@ -73,6 +73,18 @@ spec:
             - name: postgres
               containerPort: {{ .Values.postgres.service.port }}
               protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U
+                - postgres
+          livenessProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U
+                - postgres
           {{- with .Values.postgres.env }}
           env:
             {{- toYaml . | nindent 12 }}

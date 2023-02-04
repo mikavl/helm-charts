@@ -80,11 +80,11 @@ spec:
               mountPath: /tmp
           livenessProbe:
             httpGet:
-              path: /
+              path: /status
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /status
               port: http
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
