@@ -74,10 +74,6 @@ unifi:
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
-  persistence:
-    size: 1Gi
-    storageClassName: ""
-
   env:
     - name: TZ
       value: Europe/Helsinki
@@ -124,10 +120,8 @@ unifi:
     controller:
       type: ClusterIP
       ports:
-        - name: stun
-          port: 3478
-        - name: controller
-          port: 8080
+        stun: 3478
+        controller: 8080
     https:
       type: ClusterIP
       port: 443

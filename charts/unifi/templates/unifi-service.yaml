@@ -7,14 +7,14 @@ metadata:
 spec:
   type: {{ .Values.unifi.service.controller.type }}
   ports:
-    - port: {{ (index .Values.unifi.service.controller.ports 0).port }}
-      targetPort: {{ (index .Values.unifi.service.controller.ports 0).name }}
+    - port: {{ .Values.unifi.service.controller.ports.stun }}
+      targetPort: {{ .Values.unifi.service.controller.ports.stun }}
       protocol: UDP
-      name: {{ (index .Values.unifi.service.controller.ports 0).name }}
-    - port: {{ (index .Values.unifi.service.controller.ports 1).port }}
-      targetPort: {{ (index .Values.unifi.service.controller.ports 1).name }}
+      name: stun
+    - port: {{ .Values.unifi.service.controller.ports.controller }}
+      targetPort: {{ .Values.unifi.service.controller.ports.controller }}
       protocol: TCP
-      name: {{ (index .Values.unifi.service.controller.ports 1).name }}
+      name: controller
   selector:
     {{- include "unifi.selectorLabels" . | nindent 4 }}
 ---
