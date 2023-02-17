@@ -95,6 +95,46 @@ server:
       value: "5432"
     - name: POSTGRES_USER
       value: "zabbix"
+    - name: ZBX_STARTREPORTWRITERS
+      value: "0"
+    - name: ZBX_STARTPOLLERS
+      value: "0"
+    - name: ZBX_IPMIPOLLERS
+      value: "0"
+    - name: ZBX_STARTPREPROCESSORS
+      value: "2"
+    - name: ZBX_STARTPOLLERSUNREACHABLE
+      value: "0"
+    - name: ZBX_STARTTRAPPERS
+      value: "2"
+    - name: ZBX_STARTPINGERS
+      value: "0"
+    - name: ZBX_STARTDISCOVERERS
+      value: "0"
+    - name: ZBX_STARTHISTORYPOLLERS
+      value: "1"
+    - name: ZBX_STARTHTTPPOLLERS
+      value: "0"
+    - name: ZBX_STARTODBCPOLLERS
+      value: "0"
+    - name: ZBX_STARTTIMERS
+      value: "1"
+    - name: ZBX_STARTESCALATORS
+      value: "1"
+    - name: ZBX_STARTALERTERS
+      value: "1"
+    - name: ZBX_STARTJAVAPOLLERS
+      value: "0"
+    - name: ZBX_STARTLLDPROCESSORS
+      value: "1"
+    - name: ZBX_STARTVMWARECOLLECTORS
+      value: "0"
+    - name: ZBX_ENABLE_SNMP_TRAPS
+      value: "false"
+    - name: ZBX_STARTDBSYNCERS
+      value: "2"
+    - name: ZBX_STARTPROXYPOLLERS
+      value: "0"
 
   serviceAccount:
     # Specifies whether a service account should be created
