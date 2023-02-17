@@ -11,5 +11,8 @@ spec:
       targetPort: zabbix
       protocol: TCP
       name: zabbix
+      {{- if .Values.server.service.nodePort }}
+      nodePort: {{ .Values.server.service.nodePort }}
+      {{- end }}
   selector:
     {{- include "server.selectorLabels" . | nindent 4 }}
