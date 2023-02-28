@@ -14,6 +14,16 @@ entries:
   unifi:
   - apiVersion: v2
     appVersion: latest
+    created: "2023-02-28T14:17:46.607036591Z"
+    description: A Helm chart for Kubernetes
+    digest: d2a4cb74a5f1d4f653cc66c531458b47940a731be28ef2733f4f20e8fda0c50e
+    name: unifi
+    type: application
+    urls:
+    - https://github.com/mikavl/helm-charts/releases/download/unifi-0.3.0/unifi-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: latest
     created: "2023-02-16T15:50:18.180729202Z"
     description: A Helm chart for Kubernetes
     digest: 730e944e02a3d288fbc7f6855c2ae1d9a27fd475484c7778a238ee7c4cee1a1b
@@ -203,4 +213,4 @@ entries:
     urls:
     - https://github.com/mikavl/helm-charts/releases/download/zabbix-0.1.0/zabbix-0.1.0.tgz
     version: 0.1.0
-generated: "2023-02-17T13:19:50.716709778Z"
+generated: "2023-02-28T14:17:46.607083392Z"
