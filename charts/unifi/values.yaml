@@ -74,6 +74,10 @@ unifi:
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
+  persistence:
+    size: 1Gi
+    storageClassName: ""
+
   env:
     - name: TZ
       value: Europe/Helsinki
