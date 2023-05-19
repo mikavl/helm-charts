@@ -38,8 +38,11 @@ spec:
             {{- toYaml .Values.server.securityContext | nindent 12 }}
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
-          command: [ "/bin/sh" ]
-          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/zabbix"]
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - cp --recursive /etc/zabbix/* /tmp/zabbix
           volumeMounts:
             - name: zabbix
               mountPath: /tmp/zabbix

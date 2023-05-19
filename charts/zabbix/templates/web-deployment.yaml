@@ -44,8 +44,11 @@ spec:
             {{- toYaml .Values.web.securityContext | nindent 12 }}
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
-          command: [ "/bin/sh" ]
-          args: ["-c", "cp --recursive /etc/zabbix/* /tmp/zabbix && cp --recursive /etc/nginx/* /tmp/nginx && mkdir -p /tmp/nginx-lib/logs"]
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - cp --recursive /etc/zabbix/* /tmp/zabbix && cp --recursive /etc/nginx/* /tmp/nginx && mkdir -p /tmp/nginx-lib/logs
           volumeMounts:
             - name: nginx
               mountPath: /tmp/nginx
