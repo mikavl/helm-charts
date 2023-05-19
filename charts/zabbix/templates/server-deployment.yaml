@@ -1,12 +1,13 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "server.fullname" . }}
   labels:
     {{- include "server.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "server.fullname" . }}
   replicas: {{ .Values.server.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "server.selectorLabels" . | nindent 6 }}
@@ -67,9 +68,11 @@ spec:
           readinessProbe:
             tcpSocket:
               port: zabbix
+            periodSeconds: 30
           livenessProbe:
             tcpSocket:
               port: zabbix
+            periodSeconds: 30
           {{- with .Values.server.env }}
           env:
             {{- toYaml . | nindent 12 }}
