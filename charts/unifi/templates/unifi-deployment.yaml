@@ -1,25 +1,16 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "unifi.fullname" . }}
   labels:
     {{- include "unifi.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "unifi.fullname" . }}
   replicas: {{ .Values.unifi.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "unifi.selectorLabels" . | nindent 6 }}
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        storageClassName: {{ .Values.unifi.persistence.storageClassName }}
-        resources:
-          requests:
-            storage: {{ .Values.unifi.persistence.size }}
   template:
     metadata:
       {{- with .Values.unifi.podAnnotations }}
@@ -37,6 +28,9 @@ spec:
       securityContext:
         {{- toYaml .Values.unifi.podSecurityContext | nindent 8 }}
       volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "unifi.fullname" . }}-data
         - name: tmp
           emptyDir: {}
         - name: run
@@ -73,11 +67,13 @@ spec:
               path: /status
               port: https
               scheme: HTTPS
+            periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /status
               port: https
               scheme: HTTPS
+            periodSeconds: 30
           volumeMounts:
             - name: data
               mountPath: /unifi

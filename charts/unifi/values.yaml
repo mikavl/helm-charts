@@ -49,7 +49,7 @@ mongo:
 
   resources:
     limits:
-      cpu: 1
+      cpu: "1"
       memory: 500Mi
     requests:
       cpu: 100m
@@ -126,6 +126,9 @@ unifi:
       ports:
         stun: 3478
         controller: 8080
+      nodePorts: {}
+        # stun:
+        # controller:
     https:
       type: ClusterIP
       port: 443
@@ -149,7 +152,7 @@ unifi:
 
   resources:
     limits:
-      cpu: 2
+      cpu: "2"
       memory: 1000Mi
     requests:
       cpu: 100m
