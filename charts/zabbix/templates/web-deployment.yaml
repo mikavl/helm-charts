@@ -93,10 +93,12 @@ spec:
             httpGet:
               path: /status
               port: http
+            periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /status
               port: http
+            periodSeconds: 30
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
       {{- with .Values.web.nodeSelector }}
