@@ -222,6 +222,12 @@ web:
       value: "zabbix-server"
     - name: ZBX_SERVER_PORT
       value: "10051"
+    - name: PHP_FPM_PM
+      value: static
+    - name: PHP_FPM_PM_MAX_CHILDREN
+      value: "5"
+    - name: PHP_FPM_PM_START_SERVERS
+      value: "5"
 
   podAnnotations: {}
 
