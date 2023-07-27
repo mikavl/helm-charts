@@ -75,6 +75,16 @@ entries:
   zabbix:
   - apiVersion: v2
     appVersion: alpine-6.0-latest
+    created: "2023-07-27T07:43:55.685801471Z"
+    description: A Helm chart for Kubernetes
+    digest: b7b4cdbf96da5f489fe0e17c16a9a0c53764f991bc5c440e52fd1c0cc262277c
+    name: zabbix
+    type: application
+    urls:
+    - https://github.com/mikavl/helm-charts/releases/download/zabbix-1.0.4/zabbix-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
+    appVersion: alpine-6.0-latest
     created: "2023-07-24T19:08:54.528381138Z"
     description: A Helm chart for Kubernetes
     digest: 9f995b40ffa0873ff14793942daae702499da260ac0e217145f0712405999598
@@ -263,4 +273,4 @@ entries:
     urls:
     - https://github.com/mikavl/helm-charts/releases/download/zabbix-0.1.0/zabbix-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-24T19:08:54.52860014Z"
+generated: "2023-07-27T07:43:55.685931968Z"
