@@ -85,20 +85,20 @@ spec:
               mountPath: /tmp
           startupProbe:
             httpGet:
-              path: /status
+              path: /
               port: http
             failureThreshold: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /status
+              path: /
               port: http
-            periodSeconds: 30
+            periodSeconds: 300
           readinessProbe:
             httpGet:
-              path: /status
+              path: /
               port: http
-            periodSeconds: 30
+            periodSeconds: 300
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
       {{- with .Values.web.nodeSelector }}
