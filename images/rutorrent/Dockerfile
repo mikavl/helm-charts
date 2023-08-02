@@ -35,7 +35,7 @@ RUN apt-get update \
       --group root \
       --mode 0755 \
       --owner root \
-      /var/www/rutorrent
+      /var/www/rutorrent \
  && curl -sSL "https://github.com/Novik/ruTorrent/archive/refs/tags/v${version}.tar.gz" \
       | tar --extract \
           --ungzip \
