@@ -2,7 +2,8 @@ FROM library/debian:12-slim
 
 ARG version=4.1.7
 
-COPY --chown=root:root config docker-entrypoint.sh /
+COPY --chown=root:root config /config/
+COPY --chown=root:root docker-entrypoint.sh /
 
 RUN apt-get update \
  && apt-get install --assume-yes --no-install-recommends \
