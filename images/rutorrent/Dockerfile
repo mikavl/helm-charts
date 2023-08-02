@@ -23,7 +23,7 @@ RUN apt-get update \
       --no-user-group \
       --shell /usr/sbin/nologin \
       --uid 10000 \
-      data
+      data \
  && install \
       --directory \
       --group rutorrent \
