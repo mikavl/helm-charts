@@ -46,7 +46,7 @@ RUN apt-get update \
           --strip-components 1 \
  && sed --in-place \
       --expression '/$scgi_port =/c\$scgi_port = 0;' \
-      --expression '/$scgi_host =/c\$scgi_host = "unix:///run/rutorrent/scgi.sock";' \
+      --expression '/$scgi_host =/c\$scgi_host = "unix:///run/rtorrent/scgi.sock";' \
       --expression '/$profilePath =/c\$profilePath = "/data";' \
       --expression '/$profileMask =/c\$profileMask = 0700;' \
       /var/www/rutorrent/conf/config.php \
