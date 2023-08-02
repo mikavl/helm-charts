@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Create the /data/* directories here, as they're required by ruTorrent
+s6-setuidgid rutorrent \
+  mkdir --parents \
+    /data/torrents \
+    /data/users \
+    /run/php \
+    /run/php/session
+
+exec s6-setuidgid rutorrent \
+  /usr/sbin/php-fpm8.2 --nodaemonize --fpm-config /config/php/php-fpm.conf

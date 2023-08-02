@@ -1,0 +1,12 @@
+#!/bin/sh
+
+s6-setuidgid rutorrent \
+  mkdir --parents \
+    /run/rtorrent
+
+s6-setuidgid rutorrent \
+  rm --force \
+    /data/session/rtorrent.lock
+
+exec s6-setuidgid rutorrent \
+  /usr/bin/rtorrent -n -o import=/config/rtorrent/rtorrent.rc
