@@ -29,7 +29,7 @@ RUN apt-get update \
       --group rutorrent \
       --mode 0700 \
       --owner rutorrent \
-      /home/rutorrent \
+      /data \
  && install \
       --directory \
       --group root \
