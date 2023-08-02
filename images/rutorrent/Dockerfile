@@ -53,4 +53,4 @@ RUN apt-get update \
 
 WORKDIR /data
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD [ "/usr/bin/s6-svscan", "/run/rutorrent/s6"  ]
+CMD [ "/usr/bin/s6-svscan", "/run/s6"  ]
