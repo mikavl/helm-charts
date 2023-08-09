@@ -3,7 +3,7 @@ postgres:
 
   image:
     repository: library/postgres
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "15"
 
@@ -74,7 +74,7 @@ server:
 
   image:
     repository: zabbix/zabbix-server-pgsql
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
@@ -188,7 +188,7 @@ web:
 
   image:
     repository: zabbix/zabbix-web-nginx-pgsql
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
