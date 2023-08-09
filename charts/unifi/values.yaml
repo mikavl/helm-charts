@@ -12,7 +12,7 @@ mongo:
     tag: "3.6"
 
   persistence:
-    size: 10Gi
+    size: 1Gi
     storageClassName: ""
 
   imagePullSecrets: []
@@ -49,8 +49,8 @@ mongo:
 
   resources:
     limits:
-      cpu: "1"
-      memory: 500Mi
+      cpu: 100m
+      memory: 250Mi
     requests:
       cpu: 100m
       memory: 250Mi
@@ -152,7 +152,7 @@ unifi:
 
   resources:
     limits:
-      cpu: "2"
+      cpu: "1"
       memory: 1000Mi
     requests:
       cpu: 100m
