@@ -8,9 +8,9 @@ spec:
   type: {{ .Values.server.service.type }}
   ports:
     - port: {{ .Values.server.service.port }}
-      targetPort: zabbix
+      targetPort: zabbix-server
       protocol: TCP
-      name: zabbix
+      name: zabbix-server
       {{- if .Values.server.service.nodePort }}
       nodePort: {{ .Values.server.service.nodePort }}
       {{- end }}
