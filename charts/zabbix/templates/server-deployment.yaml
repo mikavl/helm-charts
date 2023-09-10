@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "server.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.server.replicaCount }}
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -21,10 +21,13 @@ spec:
         {{- include "server.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
-        - name: zabbix
+        - name: config
           emptyDir: {}
         - name: tmp
           emptyDir: {}
+      {{- with .Values.server.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.server.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -39,13 +42,15 @@ spec:
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
+            - "/bin/cp"
           args:
-            - -c
-            - cp --recursive /etc/zabbix/* /tmp/zabbix
+            - "-f"
+            - "-r"
+            - "/etc/zabbix/."
+            - "/config"
           volumeMounts:
-            - name: zabbix
-              mountPath: /tmp/zabbix
+            - name: config
+              mountPath: /config
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
       containers:
@@ -55,31 +60,35 @@ spec:
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           ports:
-            - name: zabbix
+            - name: zabbix-server
               containerPort: {{ .Values.server.service.port }}
               protocol: TCP
           volumeMounts:
-            - name: zabbix
+            - name: config
               mountPath: /etc/zabbix
             - name: tmp
               mountPath: /tmp
+          {{- with .Values.server.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           startupProbe:
             tcpSocket:
-              port: zabbix
+              port: zabbix-server
             failureThreshold: 30
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
-              port: zabbix
+              port: zabbix-server
             periodSeconds: 30
           livenessProbe:
             tcpSocket:
-              port: zabbix
+              port: zabbix-server
             periodSeconds: 30
-          {{- with .Values.server.env }}
-          env:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "server.fullname" . }}-env
+            - secretRef:
+                name: {{ include "server.fullname" . }}-env
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
       {{- with .Values.server.nodeSelector }}

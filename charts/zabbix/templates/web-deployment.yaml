@@ -23,14 +23,17 @@ spec:
       volumes:
         - name: nginx-lib
           emptyDir: {}
-        - name: nginx
+        - name: nginx-config
           emptyDir: {}
         - name: session
           emptyDir: {}
-        - name: zabbix
+        - name: zabbix-config
           emptyDir: {}
         - name: tmp
           emptyDir: {}
+      {{- with .Values.web.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.web.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -45,17 +48,21 @@ spec:
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
+            - "/bin/sh"
           args:
-            - -c
-            - cp --recursive /etc/zabbix/* /tmp/zabbix && cp --recursive /etc/nginx/* /tmp/nginx && mkdir -p /tmp/nginx-lib/logs
+            - "-c"
+            - |
+              set -ex
+              cp -fr /etc/zabbix/. /config
+              cp -fr /etc/nginx/. /nginx-config
+              mkdir -p /nginx-lib/logs
           volumeMounts:
-            - name: nginx
-              mountPath: /tmp/nginx
+            - name: nginx-config
+              mountPath: /nginx-config
             - name: nginx-lib
-              mountPath: /tmp/nginx-lib
-            - name: zabbix
-              mountPath: /tmp/zabbix
+              mountPath: /nginx-lib
+            - name: zabbix-config
+              mountPath: /config
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
       containers:
@@ -68,21 +75,25 @@ spec:
             - name: http
               containerPort: {{ .Values.web.service.port }}
               protocol: TCP
-          {{- with .Values.web.env }}
-          env:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "web.fullname" . }}-env
+            - secretRef:
+                name: {{ include "web.fullname" . }}-env
           volumeMounts:
-            - name: nginx
+            - name: nginx-config
               mountPath: /etc/nginx
             - name: nginx-lib
               mountPath: /var/lib/nginx
             - name: session
               mountPath: /var/lib/php/session
-            - name: zabbix
+            - name: zabbix-config
               mountPath: /etc/zabbix
             - name: tmp
               mountPath: /tmp
+          {{- with .Values.web.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           startupProbe:
             httpGet:
               path: /
