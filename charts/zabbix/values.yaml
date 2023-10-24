@@ -1,5 +1,4 @@
-networkPolicy:
-  create: true
+---
 
 server:
   image:
