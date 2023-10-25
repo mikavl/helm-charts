@@ -84,11 +84,20 @@ spec:
             tcpSocket:
               port: zabbix-server
             periodSeconds: 30
-          envFrom:
-            - configMapRef:
-                name: {{ include "server.fullname" . }}-env
-            - secretRef:
-                name: {{ include "server.fullname" . }}-env
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ include "zabbix.fullname" . }}-database-credentials"
+                  key: POSTGRES_PASSWORD
+            {{- range $k, $v := .Values.extraEnv }}
+            - name: {{ $k }}
+              value: "{{ $v }}"
+            {{- end }}
+            {{- range $k, $v := .Values.server.extraEnv }}
+            - name: {{ $k }}
+              value: "{{ $v }}"
+            {{- end }}
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
       {{- with .Values.server.nodeSelector }}

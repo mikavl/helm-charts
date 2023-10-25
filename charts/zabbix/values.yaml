@@ -1,5 +1,9 @@
 ---
 
+nameOverride: ""
+fullnameOverride: ""
+extraEnv: {}
+
 server:
   image:
     repository: zabbix/zabbix-server-pgsql
@@ -9,6 +13,8 @@ server:
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
+
+  extraEnv: {}
 
   extraVolumes: []
 
@@ -57,6 +63,8 @@ web:
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
+
+  extraEnv: {}
 
   serviceAccount:
     create: true

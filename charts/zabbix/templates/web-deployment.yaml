@@ -75,11 +75,24 @@ spec:
             - name: http
               containerPort: {{ .Values.web.service.port }}
               protocol: TCP
-          envFrom:
-            - configMapRef:
-                name: {{ include "web.fullname" . }}-env
-            - secretRef:
-                name: {{ include "web.fullname" . }}-env
+          env:
+            - name: ZBX_SERVER_HOST
+              value: "{{ include "server.fullname" . }}"
+            - name: ZBX_SERVER_PORT
+              value: "{{ .Values.server.service.port }}"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ include "zabbix.fullname" . }}-database-credentials"
+                  key: POSTGRES_PASSWORD
+            {{- range $k, $v := .Values.extraEnv }}
+            - name: {{ $k }}
+              value: "{{ $v }}"
+            {{- end }}
+            {{- range $k, $v := .Values.web.extraEnv }}
+            - name: {{ $k }}
+              value: "{{ $v }}"
+            {{- end }}
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx

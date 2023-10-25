@@ -1,8 +1,25 @@
+{{- define "zabbix.name" -}}
+{{- default "zabbix" .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "zabbix.fullname" -}}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default (include "zabbix.name" .) .Values.nameOverride }}
+{{- if contains $name (include "zabbix.name" .) }}
+{{- (include "zabbix.name" .) | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" (include "zabbix.name" .) $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
 {{/*
 Expand the name of the chart.
 */}}
 {{- define "server.name" -}}
-{{- default "zabbix-server" .Values.server.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default (printf "%s-server" (include "zabbix.name" .)) .Values.server.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -14,11 +31,11 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.server.fullnameOverride }}
 {{- .Values.server.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default "zabbix-server" .Values.server.nameOverride }}
-{{- if contains $name "zabbix-server" }}
-{{- "zabbix-server" | trunc 63 | trimSuffix "-" }}
+{{- $name := default (printf "%s-server" (include "zabbix.name" .)) .Values.server.nameOverride }}
+{{- if contains $name (printf "%s-server" (include "zabbix.name" .)) }}
+{{- (printf "%s-server" (include "zabbix.name" .)) | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- printf "%s-%s" "zabbix-server" $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" (printf "$s-server" (include "zabbix.name" .)) $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -65,7 +82,7 @@ Create the name of the service account to use
 Expand the name of the chart.
 */}}
 {{- define "web.name" -}}
-{{- default "zabbix-web" .Values.web.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default (printf "%s-web" (include "zabbix.name" .)) .Values.web.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -77,11 +94,11 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.web.fullnameOverride }}
 {{- .Values.web.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default "zabbix-web" .Values.web.nameOverride }}
-{{- if contains $name "zabbix-web" }}
-{{- "zabbix-web" | trunc 63 | trimSuffix "-" }}
+{{- $name := default (printf "%s-web" (include "zabbix.name" .)) .Values.web.nameOverride }}
+{{- if contains $name (printf "%s-web" (include "zabbix.name" .)) }}
+{{- (printf "%s-web" (include "zabbix.name" .)) | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- printf "%s-%s" "zabbix-web" $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" (printf "%s-web" (include "zabbix.name" .)) $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
