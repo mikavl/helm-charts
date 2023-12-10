@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "acmedns.fullname" . }}-data
+  name: {{ include "acmedns.fullname" . }}
   labels:
     {{- include "acmedns.labels" . | nindent 4 }}
 spec:
