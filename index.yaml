@@ -3,6 +3,16 @@ entries:
   acmedns:
   - apiVersion: v2
     appVersion: stealth
+    created: "2023-12-10T08:02:50.61512004Z"
+    description: An acme-dns Helm chart for Kubernetes
+    digest: 7be089e978338ef037eab8916ccc23ca7f7068c1caf6b39e155ac8a1443ae18c
+    name: acmedns
+    type: application
+    urls:
+    - https://github.com/mikavl/helm-charts/releases/download/acmedns-1.0.2/acmedns-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: stealth
     created: "2023-12-10T07:48:50.593692243Z"
     description: An acme-dns Helm chart for Kubernetes
     digest: d892faa0d5ac6121f919bd3d47b68075c633ab739d323fcbab3ba94569fa2f0d
@@ -355,4 +365,4 @@ entries:
     urls:
     - https://github.com/mikavl/helm-charts/releases/download/zabbix-0.1.0/zabbix-0.1.0.tgz
     version: 0.1.0
-generated: "2023-12-10T07:48:50.593779626Z"
+generated: "2023-12-10T08:02:50.615207484Z"
