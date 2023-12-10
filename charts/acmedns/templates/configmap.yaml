@@ -13,8 +13,8 @@ data:
     nsname = "{{ .Values.config.domain }}"
     nsadmin = "{{ .Values.config.admin }}"
     records = [
-        "{{ .Values.config.domain }} A {{ .Values.config.address }}",
-        "{{ .Values.config.domain }} NS {{ .Values.config.domain }}",
+        "{{ .Values.config.domain }}. A {{ .Values.config.address }}",
+        "{{ .Values.config.domain }}. NS {{ .Values.config.domain }}.",
     ]
     debug = false
 

@@ -1,10 +1,10 @@
 replicaCount: 1
 
 config:
-  admin: "" # admin.yourdomain.example.
+  admin: "" # admin.yourdomain.example
   address: ""
   disableRegistration: "false"
-  domain: "" # acme.yourdomain.example.
+  domain: "" # acme.yourdomain.example
 
 image:
   repository: ghcr.io/mikavl/acmedns
