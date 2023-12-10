@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "acmedns.fullname" . }}
+  labels:
+    {{- include "acmedns.labels" . | nindent 4 }}
+data:
+  config.cfg: |
+    [general]
+    listen = "0.0.0.0:5353"
+    protocol = "udp4"
+    domain = "{{ .Values.config.domain }}"
+    nsname = "{{ .Values.config.domain }}"
+    nsadmin = "{{ .Values.config.admin }}"
+    records = [
+        "{{ .Values.config.domain }} A {{ .Values.config.address }}",
+        "{{ .Values.config.domain }} NS {{ .Values.config.domain }}",
+    ]
+    debug = false
+
+    [database]
+    engine = "sqlite3"
+    connection = "/var/lib/acme-dns/acmedns.db"
+
+    [api]
+    ip = "0.0.0.0"
+    disable_registration = {{ .Values.config.disableRegistration }}
+    port = "8080"
+    tls = "none"
+    corsorigins = ["*"]
+    use_header = false
+    header_name = "X-Forwarded-For"
+
+    [logconfig]
+    loglevel = "debug"
+    logtype = "stdout"
+    logformat = "text"
