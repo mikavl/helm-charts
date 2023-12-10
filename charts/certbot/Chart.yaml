@@ -1,0 +1,6 @@
+apiVersion: v2
+name: certbot
+description: A certbot Helm chart for Kubernetes to be used with acmedns
+type: application
+version: 1.0.0
+appVersion: "v2.8.0-1"

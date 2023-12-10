@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "certbot.fullname" . }}
+  labels:
+    {{- include "certbot.labels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.config.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          {{- with .Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+            {{- include "certbot.selectorLabels" . | nindent 12 }}
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "certbot.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: "{{ include "certbot.fullname" . }}"
+            - name: lib
+              emptyDir: {}
+            - name: log
+              emptyDir: {}
+            - name: tmp
+              emptyDir: {}
+          containers:
+            - name: {{ .Chart.Name }}
+              securityContext:
+                {{- toYaml .Values.securityContext | nindent 16 }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              env:
+                - name: ACMEDNS_URL
+                  value: "{{ .Values.config.acmedns.url }}"
+                - name: ACMEDNS_ALLOW_FROM
+                  value: "{{ include "certbot.acmednsAllowFrom" . }}"
+                - name: ACMEDNS_CERTBOT_DOMAINS
+                  value: "{{ include "certbot.domainArgs" . }}"
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+              volumeMounts:
+                - name: data
+                  mountPath: /etc/letsencrypt
+                - name: lib
+                  mountPath: /var/lib/letsencrypt
+                - name: log
+                  mountPath: /var/log/letsencrypt
+                - name: tmp
+                  mountPath: /tmp
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
