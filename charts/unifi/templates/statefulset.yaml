@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "unifi.fullname" . }}
+  labels:
+    {{- include "unifi.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "unifi.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ .Values.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "unifi.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "unifi.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "unifi.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: stun
+              containerPort: {{ .Values.service.ports.stun }}
+              protocol: UDP
+            - name: controller
+              containerPort: {{ .Values.service.ports.controller }}
+              protocol: TCP
+            - name: https
+              containerPort: {{ .Values.service.ports.https }}
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /status
+              port: https
+              scheme: HTTPS
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: https
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: https
+              scheme: HTTPS
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /unifi
+            - name: run
+              mountPath: /run
+            - name: unifi-run
+              mountPath: /unifi/run
+            - name: tmp
+              mountPath: /tmp
+          {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: unifi-run
+          emptyDir: {}
+      {{- if not .Values.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+      {{- end }}
+      {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
