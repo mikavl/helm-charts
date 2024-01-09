@@ -51,7 +51,6 @@ spec:
             - "/usr/bin/mongod"
           args:
             - "--bind_ip_all"
-            - "--nojournal"
             - "--wiredTigerCacheSizeGB"
             - "0.25"
           ports:
