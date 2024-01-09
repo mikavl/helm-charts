@@ -1,12 +1,23 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "mongo.fullname" . }}
   labels:
     {{- include "mongo.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
+  serviceName: {{ include "mongo.fullname" . }}
   replicas: {{ .Values.replicaCount }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ .Values.persistence.storageClassName }}
+        resources:
+          requests:
+            size: {{ .Values.persistence.size }}
   {{- end }}
   selector:
     matchLabels:
@@ -36,26 +47,57 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "/usr/bin/mongod"
+          args:
+            - "--bind_ip_all"
+            - "--nojournal"
+            - "--wiredTigerCacheSizeGB"
+            - "0.25"
           ports:
-            - name: http
+            - name: mongo
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          startupProbe:
+            exec:
+              command:
+                - "mongo"
+                - "--eval"
+                - "db.runCommand('ping').ok"
+                - "--quiet"
+            failureThreshold: 30
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            exec:
+              command:
+                - "mongo"
+                - "--eval"
+                - "db.runCommand('ping').ok"
+                - "--quiet"
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            exec:
+              command:
+                - "mongo"
+                - "--eval"
+                - "db.runCommand('ping').ok"
+                - "--quiet"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: data
+              mountPath: /data/db
+          {{- with .Values.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
       volumes:
+        - name: tmp
+          emptyDir: {}
+      {{- if not .Values.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+      {{- end }}
+      {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
