@@ -17,7 +17,7 @@ spec:
         storageClassName: {{ .Values.persistence.storageClassName }}
         resources:
           requests:
-            size: {{ .Values.persistence.size }}
+            storage: {{ .Values.persistence.size }}
   {{- end }}
   selector:
     matchLabels:
