@@ -63,6 +63,17 @@ entries:
     urls:
     - https://github.com/mikavl/helm-charts/releases/download/jenkins-1.0.0/jenkins-1.0.0.tgz
     version: 1.0.0
+  postgres:
+  - apiVersion: v2
+    appVersion: "16.1"
+    created: "2024-01-10T13:03:17.223393373Z"
+    description: A PostgreSQL Helm chart for Kubernetes
+    digest: 4617a0bef45c81192fa7d51d3a484fc6f7ff3c02db6e7600afb2f1e7105df1f8
+    name: postgres
+    type: application
+    urls:
+    - https://github.com/mikavl/helm-charts/releases/download/postgres-0.1.0/postgres-0.1.0.tgz
+    version: 0.1.0
   rutorrent:
   - apiVersion: v2
     appVersion: main
@@ -386,4 +397,4 @@ entries:
     urls:
     - https://github.com/mikavl/helm-charts/releases/download/zabbix-0.1.0/zabbix-0.1.0.tgz
     version: 0.1.0
-generated: "2023-12-10T09:30:55.508278734Z"
+generated: "2024-01-10T13:03:17.22347691Z"
